@@ -10,6 +10,7 @@
     "test": "plasmo test"
   },
   "dependencies": {
+    "@plasmohq/messaging": "^0.6.0",
     "plasmo": "0.84.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
@@ -24,6 +25,11 @@
     "typescript": "5.2.2"
   },
   "manifest": {
+    "permissions": [
+      "tabs",
+      "activeTab",
+      "scripting"
+    ],
     "host_permissions": [
       "https://*/*"
     ]

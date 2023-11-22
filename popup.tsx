@@ -1,27 +1,48 @@
 import { useState } from "react"
 
+import type { RequestBody, ResponseBody } from "~background/messages/clean"
+import { sendToBackground } from "~node_modules/@plasmohq/messaging"
+import { sleep } from "~utils/sleep"
+
 function IndexPopup() {
-  const [data, setData] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleClick = async () => {
+    setIsLoading(true)
+
+    let hasNext = true
+
+    while (hasNext) {
+      try {
+        const response = await sendToBackground<RequestBody, ResponseBody>({
+          name: "clean"
+        })
+
+        hasNext = response.hasNext
+      } catch (error) {
+        hasNext = false
+      }
+
+      if (hasNext) {
+        await sleep(1000)
+      }
+    }
+
+    setIsLoading(false)
+  }
 
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        padding: 16
+        padding: 16,
+        width: 100
       }}>
-      <h2>
-        Welcome to your
-        <a href="https://www.plasmo.com" target="_blank">
-          {" "}
-          Plasmo
-        </a>{" "}
-        Extension!
-      </h2>
-      <input onChange={(e) => setData(e.target.value)} value={data} />
-      <a href="https://docs.plasmo.com" target="_blank">
-        View Docs
-      </a>
+      <button
+        disabled={isLoading}
+        onClick={handleClick}
+        style={{ width: "100%" }}>
+        {isLoading ? "loading" : "clean"}
+      </button>
     </div>
   )
 }
